@@ -25,10 +25,10 @@ namespace project_m7
             this.guna2TextBox2 = new Guna.UI2.WinForms.Guna2TextBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.SuspendLayout();
             // 
             // guna2Button1
@@ -41,10 +41,10 @@ namespace project_m7
             this.guna2Button1.FillColor = System.Drawing.Color.DarkSlateBlue;
             this.guna2Button1.Font = new System.Drawing.Font("29LT Bukra Bold Italic", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))));
             this.guna2Button1.ForeColor = System.Drawing.Color.White;
-            this.guna2Button1.Location = new System.Drawing.Point(244, 281);
+            this.guna2Button1.Location = new System.Drawing.Point(220, 284);
             this.guna2Button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.guna2Button1.Name = "guna2Button1";
-            this.guna2Button1.Size = new System.Drawing.Size(144, 44);
+            this.guna2Button1.Size = new System.Drawing.Size(167, 44);
             this.guna2Button1.TabIndex = 4;
             this.guna2Button1.Text = "login";
             this.guna2Button1.Click += new System.EventHandler(this.guna2Button1_Click);
@@ -107,6 +107,7 @@ namespace project_m7
             this.label2.Size = new System.Drawing.Size(332, 50);
             this.label2.TabIndex = 9;
             this.label2.Text = "Welcome again!";
+            this.label2.Click += new System.EventHandler(this.label2_Click_1);
             // 
             // guna2TextBox2
             // 
@@ -156,16 +157,6 @@ namespace project_m7
             this.linkLabel2.TabStop = true;
             this.linkLabel2.Text = "Forget password";
             // 
-            // pictureBox3
-            // 
-            this.pictureBox3.Image = global::project_m7.Properties.Resources.Coins_pana;
-            this.pictureBox3.Location = new System.Drawing.Point(297, -108);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(509, 262);
-            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox3.TabIndex = 17;
-            this.pictureBox3.TabStop = false;
-            // 
             // pictureBox2
             // 
             this.pictureBox2.Image = global::project_m7.Properties.Resources.Coins_rafiki;
@@ -175,6 +166,16 @@ namespace project_m7
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox2.TabIndex = 16;
             this.pictureBox2.TabStop = false;
+            // 
+            // pictureBox3
+            // 
+            this.pictureBox3.Image = global::project_m7.Properties.Resources.Coins_pana;
+            this.pictureBox3.Location = new System.Drawing.Point(297, -108);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(509, 262);
+            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox3.TabIndex = 17;
+            this.pictureBox3.TabStop = false;
             // 
             // Form1
             // 
@@ -196,8 +197,8 @@ namespace project_m7
             this.Name = "Form1";
             this.Text = "    ";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
