@@ -102,14 +102,15 @@ namespace project_m7
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.CornflowerBlue;
-            this.label1.Location = new System.Drawing.Point(129, 119);
+            this.label1.Font = new System.Drawing.Font("29LT Bukra Bold Italic", 26.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.DarkSlateBlue;
+            this.label1.Location = new System.Drawing.Point(154, 135);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(270, 55);
+            this.label1.Size = new System.Drawing.Size(227, 47);
             this.label1.TabIndex = 7;
             this.label1.Text = "Login Here";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // Form1
             // 
