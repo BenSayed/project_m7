@@ -42,7 +42,7 @@ namespace project_m7
             this.guna2Button1.Font = new System.Drawing.Font("29LT Bukra Bold Italic", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))));
             this.guna2Button1.ForeColor = System.Drawing.Color.White;
             this.guna2Button1.Location = new System.Drawing.Point(220, 284);
-            this.guna2Button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.guna2Button1.Margin = new System.Windows.Forms.Padding(2);
             this.guna2Button1.Name = "guna2Button1";
             this.guna2Button1.Size = new System.Drawing.Size(167, 44);
             this.guna2Button1.TabIndex = 4;
@@ -102,11 +102,11 @@ namespace project_m7
             this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("29LT Bukra Bold Italic", 27.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.DarkSlateBlue;
-            this.label2.Location = new System.Drawing.Point(139, 71);
+            this.label2.Location = new System.Drawing.Point(187, 71);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(332, 50);
+            this.label2.Size = new System.Drawing.Size(212, 50);
             this.label2.TabIndex = 9;
-            this.label2.Text = "Welcome again!";
+            this.label2.Text = "Welcome ";
             this.label2.Click += new System.EventHandler(this.label2_Click_1);
             // 
             // guna2TextBox2
@@ -193,7 +193,7 @@ namespace project_m7
             this.Controls.Add(this.guna2Button1);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox3);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "    ";
             this.Load += new System.EventHandler(this.Form1_Load);

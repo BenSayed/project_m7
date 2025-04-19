@@ -10,25 +10,16 @@ using System.Windows.Forms;
 
 namespace project_m7
 {
-    public partial class Form2 : Form
+    public partial class Form3 : Form
     {
-        public Form2()
+        public Form3()
         {
             InitializeComponent();
         }
 
-        private void label2_Click(object sender, EventArgs e)
+        private void label5_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void guna2TextBox5_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void guna2TextBox6_TextChanged(object sender, EventArgs e)
-        {
 
         }
     }
