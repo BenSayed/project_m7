@@ -106,5 +106,10 @@ namespace project_m7
         {
 
         }
+
+        private void label2_Click_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
