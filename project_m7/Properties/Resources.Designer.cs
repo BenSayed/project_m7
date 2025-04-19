@@ -93,6 +93,16 @@ namespace project_m7.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Coins_pana2 {
+            get {
+                object obj = ResourceManager.GetObject("Coins-pana2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Coins_rafiki {
             get {
                 object obj = ResourceManager.GetObject("Coins-rafiki", resourceCulture);
@@ -136,6 +146,16 @@ namespace project_m7.Properties {
         internal static System.Drawing.Bitmap Investment_data_rafiki {
             get {
                 object obj = ResourceManager.GetObject("Investment data-rafiki", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Investment_data_rafiki1 {
+            get {
+                object obj = ResourceManager.GetObject("Investment data-rafiki1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
