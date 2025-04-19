@@ -81,7 +81,7 @@
             this.linkLabel1.Size = new System.Drawing.Size(71, 22);
             this.linkLabel1.TabIndex = 16;
             this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Ahmed";
+           
             // 
             // label3
             // 
@@ -130,7 +130,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(109, 18);
             this.label5.TabIndex = 24;
-            this.label5.Text = "Ahmed SaYED";
+           
             this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // label6
@@ -156,7 +156,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(139, 18);
             this.label7.TabIndex = 26;
-            this.label7.Text = "1234567890123456";
+            //this.label7.Text = "1234567890123456";
             // 
             // label8
             // 
@@ -182,7 +182,7 @@
             this.label9.Padding = new System.Windows.Forms.Padding(2, 2, 5, 3);
             this.label9.Size = new System.Drawing.Size(64, 28);
             this.label9.TabIndex = 28;
-            this.label9.Text = "1273$";
+            //this.label9.Text = "1273$";
             // 
             // guna2Button1
             // 
@@ -248,7 +248,7 @@
             this.label10.Size = new System.Drawing.Size(96, 15);
             this.label10.TabIndex = 32;
             this.label10.Text = "Latest Debit";
-            this.label10.Click += new System.EventHandler(this.label10_Click);
+            //this.label10.Click += new System.EventHandler(this.label10_Click);
             // 
             // label11
             // 
@@ -364,7 +364,7 @@
             this.label19.Size = new System.Drawing.Size(199, 18);
             this.label19.TabIndex = 41;
             this.label19.Text = "2025/02/22  id 12345 -200$";
-            this.label19.Click += new System.EventHandler(this.label19_Click);
+            //this.label19.Click += new System.EventHandler(this.label19_Click);
             // 
             // label20
             // 
@@ -447,7 +447,7 @@
             this.Controls.Add(this.pictureBox2);
             this.Name = "Form3";
             this.Text = "Form3";
-            this.Load += new System.EventHandler(this.Form3_Load);
+            //this.Load += new System.EventHandler(this.Form3_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
