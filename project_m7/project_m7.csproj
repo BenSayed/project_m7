@@ -76,6 +76,12 @@
     <Compile Include="Form3.Designer.cs">
       <DependentUpon>Form3.cs</DependentUpon>
     </Compile>
+    <Compile Include="PasswordResetForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PasswordResetForm.Designer.cs">
+      <DependentUpon>PasswordResetForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -87,16 +93,14 @@
     <EmbeddedResource Include="Form3.resx">
       <DependentUpon>Form3.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PasswordResetForm.resx">
+      <DependentUpon>PasswordResetForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="Bank_appDataSet1.xsc">
       <DependentUpon>Bank_appDataSet1.xsd</DependentUpon>
     </None>
@@ -113,6 +117,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -123,46 +132,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\pngegg.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\pngegg1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Coins-rafiki.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Coins-pana.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\E-Wallet-amico.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Untitled-3 copy.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Untitled-3 copy1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\E-Wallet-amico1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\E-Wallet-pana.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Coins-pana1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Coins-amico.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Investment data-rafiki.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Investment data-rafiki1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Coins-pana2.png" />
+    <Content Include="Resources\bank.ico" />
+    <None Include="Resources\Coins-rafiki %281%29.png" />
+    <Content Include="Resources\Saving money-amico.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

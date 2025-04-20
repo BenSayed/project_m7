@@ -61,7 +61,8 @@ namespace project_m7
         {
             try
             {
-                string query = "SELECT balance FROM accounts WHERE cardnum = @cardnum";
+                string query = "SELECT cardnum, balance,firstname,lastname,id FROM accounts WHERE cardnum = @cardnum";
+                
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@cardnum", cardNumber);
@@ -69,9 +70,26 @@ namespace project_m7
                     {
                         if (reader.Read())
                         {
+                            // Display card number
+                            if (label6 != null)
+                            {
+                                label6.Text = "Card Number: " + reader["cardnum"].ToString();
+                            }
+
                             // Update balance
                             currentBalance = Convert.ToDecimal(reader["balance"]);
-                            label9.Text = $"{currentBalance:N2}$";  // Display actual balance
+                            if (label9 != null)
+                            {
+                                label9.Text = $"{currentBalance:N2}$";  // Display actual balance
+                            }
+                            if (label1 != null)
+                            {
+                                label1.Text = "Name: " + reader["firstname"].ToString()+" "+ reader["lastname"].ToString();  // Display fullname
+                            }
+                            if (label8 != null)
+                            {
+                                label8.Text = "Id: " + reader["id"].ToString();  // Display id
+                            }
                         }
                         else
                         {
@@ -233,6 +251,136 @@ namespace project_m7
                 connection.Close();
             }
             Application.Exit();
+        }
+
+        private void guna2Button2_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void guna2Button1_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void guna2Button3_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label11_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label12_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label13_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label14_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label15_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label16_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label17_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label18_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label19_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label20_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label21_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form3_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void guna2Button5_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

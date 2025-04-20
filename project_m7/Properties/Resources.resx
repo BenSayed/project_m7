@@ -133,8 +133,14 @@
   <data name="Coins-pana1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Coins-pana1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Investment data-rafiki1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Investment data-rafiki1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="E-Wallet-amico1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\E-Wallet-amico1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Untitled-3 copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Untitled-3 copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Untitled-3 copy1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Untitled-3 copy1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -142,22 +148,28 @@
   <data name="Coins-rafiki" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Coins-rafiki.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Coins-amico" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Coins-amico.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Coins-pana" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Coins-pana.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pngegg1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pngegg1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Investment data-rafiki" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Investment data-rafiki.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Untitled-3 copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Untitled-3 copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Investment data-rafiki1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Investment data-rafiki1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Coins-amico" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Coins-amico.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Coins-pana2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Coins-pana2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Coins-rafiki (1)1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Coins-rafiki (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Coins-rafiki (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Coins-rafiki (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Saving money-amico" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Saving money-amico.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

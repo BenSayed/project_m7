@@ -113,6 +113,26 @@ namespace project_m7.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Coins_rafiki__1_ {
+            get {
+                object obj = ResourceManager.GetObject("Coins-rafiki (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Coins_rafiki__1_1 {
+            get {
+                object obj = ResourceManager.GetObject("Coins-rafiki (1)1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap E_Wallet_amico {
             get {
                 object obj = ResourceManager.GetObject("E-Wallet-amico", resourceCulture);
@@ -176,6 +196,16 @@ namespace project_m7.Properties {
         internal static System.Drawing.Bitmap pngegg1 {
             get {
                 object obj = ResourceManager.GetObject("pngegg1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Saving_money_amico {
+            get {
+                object obj = ResourceManager.GetObject("Saving money-amico", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
