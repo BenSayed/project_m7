@@ -1,126 +1,121 @@
 using System;
 using System.Data;
-using Microsoft.Data.SqlClient;
+using System.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace project_m7
 {
+    public class AuthResult
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+    }
+
     public class DatabaseHelper
     {
-        private readonly string connectionString;
+        private readonly string connectionString = "Data Source=HASSAN;Initial Catalog=Bank_app;Integrated Security=True;TrustServerCertificate=True";
 
-        public DatabaseHelper(string connectionString)
+        public DatabaseHelper()
         {
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentException("Connection string cannot be null or empty", nameof(connectionString));
-            }
-            this.connectionString = connectionString;
             InitializeDatabase();
         }
 
         private void InitializeDatabase()
         {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string createTableQuery = @"
+                    IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'accounts')
+                    CREATE TABLE accounts (
+                        [cardnum] VARCHAR(16) PRIMARY KEY,
+                        [password] NVARCHAR(100) NOT NULL,
+                        [balance] DECIMAL(18,2) NOT NULL DEFAULT 0
+                    )";
+                using (SqlCommand command = new SqlCommand(createTableQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private byte[] HashPassword(string password, byte[] salt)
+        {
+            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256))
+            {
+                return pbkdf2.GetBytes(32);
+            }
+        }
+
+        public AuthResult RegisterUser(string cardnum, string password)
+        {
             try
             {
-                using (var connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    Console.WriteLine("Database connection successful!");
-                    
-                    // Create accounts table if it doesn't exist
-                    string createTableQuery = @"
-                        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'accounts')
-                        BEGIN
-                            CREATE TABLE accounts (
-                                Id INT IDENTITY(1,1) PRIMARY KEY,
-                                card_number NVARCHAR(50) UNIQUE NOT NULL,
-                                PasswordHash NVARCHAR(100) NOT NULL,
-                                CreatedAt DATETIME DEFAULT GETDATE()
-                            )
-                            PRINT 'Accounts table created successfully'
-                        END
-                        ELSE
-                        BEGIN
-                            PRINT 'Accounts table already exists'
-                        END";
 
-                    using (var command = new SqlCommand(createTableQuery, connection))
+                    // Check if card number already exists
+                    string checkQuery = "SELECT COUNT(*) FROM accounts WHERE cardnum = @cardnum";
+                    using (SqlCommand checkCommand = new SqlCommand(checkQuery, connection))
                     {
+                        checkCommand.Parameters.AddWithValue("@cardnum", cardnum);
+                        int count = (int)checkCommand.ExecuteScalar();
+                        if (count > 0)
+                        {
+                            return new AuthResult { Success = false, Message = "Card number already exists." };
+                        }
+                    }
+
+                    // Insert new user with default balance of 0
+                    string insertQuery = @"
+                        INSERT INTO accounts (cardnum, password)
+                        VALUES (@cardnum, @password)";
+                    using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                    {
+                        command.Parameters.AddWithValue("@cardnum", cardnum);
+                        command.Parameters.AddWithValue("@password", password);
                         command.ExecuteNonQuery();
-                        Console.WriteLine("Table creation query executed");
                     }
+
+                    return new AuthResult { Success = true, Message = "Registration successful." };
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error initializing database: {ex.Message}");
-                throw; // Re-throw to handle in the calling code
+                return new AuthResult { Success = false, Message = "Registration failed: " + ex.Message };
             }
         }
 
-        public bool RegisterUser(string cardNumber, string password)
+        public AuthResult LoginUser(string cardnum, string password)
         {
             try
             {
-                string passwordHash = HashPassword(password);
-
-                using (var connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = @"
-                        INSERT INTO accounts (card_number, PasswordHash)
-                        VALUES (@cardNumber, @PasswordHash)";
-
-                    using (var command = new SqlCommand(query, connection))
+                    string query = "SELECT password FROM accounts WHERE cardnum = @cardnum";
+                    using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@card_number", cardNumber);
-                        command.Parameters.AddWithValue("@PasswordHash", passwordHash);
-
-                        int result = command.ExecuteNonQuery();
-                        Console.WriteLine($"Registration result: {result} rows affected");
-                        return result > 0;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error in RegisterUser: {ex.Message}");
-                return false;
-            }
-        }
-
-        public bool LoginUser(string cardNumber, string password)
-        {
-            try
-            {
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = @"
-                        SELECT PasswordHash
-                        FROM accounts
-                        WHERE card_number = @card_number";
-
-                    using (var command = new SqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@card_number", cardNumber);
-
-                        using (var reader = command.ExecuteReader())
+                        command.Parameters.AddWithValue("@cardnum", cardnum);
+                        using (SqlDataReader reader = command.ExecuteReader())
                         {
                             if (reader.Read())
                             {
-                                string storedHash = reader["PasswordHash"].ToString();
-                                string inputHash = HashPassword(password);
-                                bool result = storedHash == inputHash;
-                                Console.WriteLine($"Login attempt for card {cardNumber}: {result}");
-                                return result;
+                                string storedPassword = reader["password"].ToString();
+                                if (password == storedPassword)
+                                {
+                                    return new AuthResult { Success = true, Message = "Login successful." };
+                                }
+                                else
+                                {
+                                    return new AuthResult { Success = false, Message = "Invalid password." };
+                                }
                             }
                             else
                             {
-                                Console.WriteLine($"No account found with card number: {cardNumber}");
-                                return false;
+                                return new AuthResult { Success = false, Message = "Card number not found." };
                             }
                         }
                     }
@@ -128,18 +123,52 @@ namespace project_m7
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in LoginUser: {ex.Message}");
-                return false;
+                return new AuthResult { Success = false, Message = "Login failed: " + ex.Message };
             }
         }
 
-        private string HashPassword(string password)
+        public decimal GetBalance(string cardnum)
         {
-            using (var sha256 = SHA256.Create())
+            try
             {
-                byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT balance FROM accounts WHERE cardnum = @cardnum";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@cardnum", cardnum);
+                        object result = command.ExecuteScalar();
+                        return result != null ? Convert.ToDecimal(result) : 0;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
+        public bool UpdateBalance(string cardnum, decimal newBalance)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "UPDATE accounts SET balance = @balance WHERE cardnum = @cardnum";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@balance", newBalance);
+                        command.Parameters.AddWithValue("@cardnum", cardnum);
+                        return command.ExecuteNonQuery() > 0;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }
-} 
+}
