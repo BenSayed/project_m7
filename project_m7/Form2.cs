@@ -1,41 +1,49 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace project_m7
 {
     public partial class Form2 : Form
     {
-        private SqlConnection connection;
+        private DatabaseHelper dbHelper;
 
         public Form2()
         {
             InitializeComponent();
-            InitializeDatabase();
-            guna2Button1.Click += Guna2Button1_Click;
-            linkLabel1.Click += LinkLabel1_Click;
-            SetupPasswordFields();
-            SetupInputValidation();
+            dbHelper = new DatabaseHelper();
+            SetupForm();
+            guna2Button1.Click += guna2Button1_Click;
         }
 
-        private void SetupPasswordFields()
+        private void SetupForm()
         {
-            // Set password char for password fields
+            // Set up text boxes
+            guna2TextBox1.PlaceholderText = "Enter First Name";
+            guna2TextBox2.PlaceholderText = "Enter Last Name";
+            guna2TextBox6.PlaceholderText = "Enter Card Number";
+            guna2TextBox5.PlaceholderText = "Enter Password";
+            guna2TextBox3.PlaceholderText = "Confirm Password";
+            
+            // Set password character for password fields
             guna2TextBox5.PasswordChar = '●';
             guna2TextBox3.PasswordChar = '●';
-        }
 
-        private void SetupInputValidation()
-        {
-            // Allow only numbers in card number field
+            // Set up button
+            guna2Button1.Text = "Create Account";
+
+            // Set up link label
+            linkLabel1.Text = "Back to Login";
+            linkLabel1.Click += LinkLabel1_Click;
+
+            // Set form title
+            this.Text = "Create Account";
+
+            // Set up card number validation
             guna2TextBox6.KeyPress += (sender, e) =>
             {
                 if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
@@ -44,81 +52,79 @@ namespace project_m7
                 }
             };
 
-            // Allow only numbers in phone number field
-            guna2TextBox7.KeyPress += (sender, e) =>
-            {
-                if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                {
-                    e.Handled = true;
-                }
-            };
+            // Limit card number to 16 digits
+            guna2TextBox6.MaxLength = 16;
         }
 
-        private bool ValidateInputs()
-        {
-            // Check if any field is empty
-            if (string.IsNullOrEmpty(guna2TextBox1.Text) || string.IsNullOrEmpty(guna2TextBox2.Text) ||
-                string.IsNullOrEmpty(guna2TextBox7.Text) || string.IsNullOrEmpty(guna2TextBox6.Text) ||
-                string.IsNullOrEmpty(guna2TextBox4.Text) || string.IsNullOrEmpty(guna2TextBox5.Text) ||
-                string.IsNullOrEmpty(guna2TextBox3.Text))
-            {
-                MessageBox.Show("Please fill in all fields.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            // Validate card number (must be exactly 16 digits)
-            if (!Regex.IsMatch(guna2TextBox6.Text.Trim(), @"^\d{16}$"))
-            {
-                MessageBox.Show("Card number must be exactly 16 digits.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                guna2TextBox6.Focus();
-                return false;
-            }
-
-            // Validate phone number (must be 11 digits and start with 01)
-            if (!Regex.IsMatch(guna2TextBox7.Text.Trim(), @"^01\d{9}$"))
-            {
-                MessageBox.Show("Phone number must be 11 digits and start with 01.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                guna2TextBox7.Focus();
-                return false;
-            }
-
-            // Validate email format
-            //if (!Regex.IsMatch(guna2TextBox4.Text.Trim(), @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"))
-            //{
-            //    MessageBox.Show("Please enter a valid email address.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    guna2TextBox4.Focus();
-            //    return false;
-            //}
-
-            // Check if passwords match
-            if (guna2TextBox5.Text != guna2TextBox3.Text)
-            {
-                MessageBox.Show("Passwords do not match.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                guna2TextBox5.Focus();
-                return false;
-            }
-
-            // Check privacy policy agreement
-            if (!checkBox1.Checked)
-            {
-                MessageBox.Show("Please agree to the privacy policy.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            return true;
-        }
-
-        private void InitializeDatabase()
+        private void guna2Button1_Click(object sender, EventArgs e)
         {
             try
             {
-                string connectionString = "Data Source=HASSAN;Initial Catalog=Bank_app;Integrated Security=True;TrustServerCertificate=True";
-                connection = new SqlConnection(connectionString);
-                connection.Open();
+                string cardnum = guna2TextBox6.Text.Trim();
+                string password = guna2TextBox5.Text.Trim();
+                string confirmPassword = guna2TextBox3.Text.Trim();
+
+                if (string.IsNullOrEmpty(cardnum))
+                {
+                    MessageBox.Show("Please enter your card number.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    guna2TextBox6.Focus();
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(password))
+                {
+                    MessageBox.Show("Please enter your password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    guna2TextBox5.Focus();
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(confirmPassword))
+                {
+                    MessageBox.Show("Please confirm your password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    guna2TextBox3.Focus();
+                    return;
+                }
+
+                if (password != confirmPassword)
+                {
+                    MessageBox.Show("Passwords do not match.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    guna2TextBox5.Text = "";
+                    guna2TextBox3.Text = "";
+                    guna2TextBox5.Focus();
+                    return;
+                }
+
+                if (cardnum.Length != 16)
+                {
+                    MessageBox.Show("Card number must be exactly 16 digits.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    guna2TextBox6.Focus();
+                    return;
+                }
+
+                var registerResult = dbHelper.RegisterUser(cardnum, password);
+                if (registerResult.Success)
+                {
+                    MessageBox.Show("Registration successful! Your initial balance is 0.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Form1 form1 = new Form1();
+                    form1.Show();
+                    this.Hide();
+                }
+                else
+                {
+                    MessageBox.Show(registerResult.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (registerResult.Message.Contains("already exists"))
+                    {
+                        guna2TextBox6.Focus();
+                    }
+                    else
+                    {
+                        guna2TextBox5.Focus();
+                    }
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error connecting to database: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -129,100 +135,29 @@ namespace project_m7
             this.Hide();
         }
 
-        private void Guna2Button1_Click(object sender, EventArgs e)
+        private void panel1_Paint(object sender, PaintEventArgs e)
         {
-            try
+            int radius = 50;
+            Graphics g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            using (GraphicsPath path = new GraphicsPath())
             {
-                // Validate all inputs first
-                if (!ValidateInputs())
+                Rectangle bounds = ((Panel)sender).ClientRectangle;
+                path.AddArc(0, 0, radius, radius, 180, 90);
+                path.AddArc(bounds.Width - radius, 0, radius, radius, 270, 90);
+                path.AddArc(bounds.Width - radius, bounds.Height - radius, radius, radius, 0, 90);
+                path.AddArc(0, bounds.Height - radius, radius, radius, 90, 90);
+                path.CloseFigure();
+                using (Pen pen = new Pen(Color.Gray, 2))
                 {
-                    return;
-                }
-
-                // First insert into accounts table
-                string accountQuery = @"
-                    INSERT INTO accounts (firstname, lastname, cardnum, password)
-                    VALUES (@FirstName, @LastName, @CardNum, @Password)";
-
-                using (SqlCommand command = new SqlCommand(accountQuery, connection))
-                {
-                    command.Parameters.AddWithValue("@FirstName", guna2TextBox1.Text.Trim());
-                    command.Parameters.AddWithValue("@LastName", guna2TextBox2.Text.Trim());
-                    command.Parameters.AddWithValue("@CardNum", guna2TextBox6.Text.Trim());
-                    command.Parameters.AddWithValue("@Password", guna2TextBox5.Text.Trim());
-
-                    command.ExecuteNonQuery();
-                }
-
-                // Then insert into user_details table with default balance of 0
-                string detailsQuery = @"
-                    INSERT INTO user_details (FirstName, SecondName, PhoneNumber, CardNumber, Email, Balance)
-                    VALUES (@FirstName, @SecondName, @PhoneNumber, @CardNumber, @Email, 0)";
-
-                using (SqlCommand command = new SqlCommand(detailsQuery, connection))
-                {
-                    command.Parameters.AddWithValue("@FirstName", guna2TextBox1.Text.Trim());
-                    command.Parameters.AddWithValue("@SecondName", guna2TextBox2.Text.Trim());
-                    command.Parameters.AddWithValue("@PhoneNumber", guna2TextBox7.Text.Trim());
-                    command.Parameters.AddWithValue("@CardNumber", guna2TextBox6.Text.Trim());
-                    command.Parameters.AddWithValue("@Email", guna2TextBox4.Text.Trim());
-
-                    command.ExecuteNonQuery();
-                }
-
-                MessageBox.Show("Account created successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                
-                // Clear form
-                guna2TextBox1.Text = "";
-                guna2TextBox2.Text = "";
-                guna2TextBox7.Text = "";
-                guna2TextBox6.Text = "";
-                guna2TextBox4.Text = "";
-                guna2TextBox5.Text = "";
-                guna2TextBox3.Text = "";
-                checkBox1.Checked = false;
-
-                // Return to login form
-                Form1 loginForm = new Form1();
-                loginForm.Show();
-                this.Hide();
-            }
-            catch (SqlException ex)
-            {
-                if (ex.Number == 2627) // Unique constraint violation
-                {
-                    MessageBox.Show("This card number is already registered.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
-                    MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    g.DrawPath(pen, path);
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void guna2TextBox5_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void guna2TextBox6_TextChanged(object sender, EventArgs e)
-        {
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
-            if (connection != null)
-            {
-                connection.Close();
-            }
             Application.Exit();
         }
     }

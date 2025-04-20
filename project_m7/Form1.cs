@@ -3,32 +3,21 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace project_m7
 {
     public partial class Form1 : Form
     {
-        private SqlConnection connection;
+        private readonly DatabaseHelper dbHelper;
 
         public Form1()
         {
             InitializeComponent();
-            InitializeDatabase();
+            dbHelper = new DatabaseHelper();
             SetupForm();
-        }
-
-        private void InitializeDatabase()
-        {
-            try
-            {
-                string connectionString = "Data Source=HASSAN;Initial Catalog=Bank_app;Integrated Security=True;TrustServerCertificate=True";
-                connection = new SqlConnection(connectionString);
-                connection.Open();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error connecting to database: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            guna2Button1.Click += guna2Button1_Click;
         }
 
         private void SetupForm()
@@ -50,6 +39,18 @@ namespace project_m7
 
             // Set form title
             this.Text = "Bank Login";
+
+            // Set up card number validation
+            guna2TextBox1.KeyPress += (sender, e) =>
+            {
+                if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+                {
+                    e.Handled = true;
+                }
+            };
+
+            // Limit card number to 16 digits
+            guna2TextBox1.MaxLength = 16;
         }
 
         private void LinkLabel1_Click(object sender, EventArgs e)
@@ -68,10 +69,10 @@ namespace project_m7
         {
             try
             {
-                string cardNumber = guna2TextBox1.Text.Trim();
+                string cardnum = guna2TextBox1.Text.Trim();
                 string password = guna2TextBox2.Text.Trim();
 
-                if (string.IsNullOrEmpty(cardNumber))
+                if (string.IsNullOrEmpty(cardnum))
                 {
                     MessageBox.Show("Please enter your card number.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     guna2TextBox1.Focus();
@@ -85,25 +86,32 @@ namespace project_m7
                     return;
                 }
 
-                // Check credentials
-                string query = "SELECT password FROM accounts WHERE cardnum = @cardnum";
-                using (SqlCommand command = new SqlCommand(query, connection))
+                if (cardnum.Length != 16)
                 {
-                    command.Parameters.AddWithValue("@cardnum", cardNumber);
-                    object result = command.ExecuteScalar();
+                    MessageBox.Show("Card number must be exactly 16 digits.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    guna2TextBox1.Focus();
+                    return;
+                }
 
-                    if (result != null && result.ToString() == password)
+                var loginResult = dbHelper.LoginUser(cardnum, password);
+                if (loginResult.Success)
+                {
+                    MessageBox.Show("Login successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Form3 form3 = new Form3(cardnum);
+                    form3.Show();
+                    this.Hide();
+                }
+                else
+                {
+                    MessageBox.Show(loginResult.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (loginResult.Message.Contains("password"))
                     {
-                        MessageBox.Show("Login successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        Form3 form3 = new Form3(cardNumber);
-                        form3.Show();
-                        this.Hide();
+                        guna2TextBox2.Text = "";
+                        guna2TextBox2.Focus();
                     }
                     else
                     {
-                        MessageBox.Show("Invalid card number or password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        guna2TextBox2.Text = ""; // Clear password field
-                        guna2TextBox2.Focus();
+                        guna2TextBox1.Focus();
                     }
                 }
             }
@@ -111,26 +119,6 @@ namespace project_m7
             {
                 MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void richTextBox2_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
@@ -164,45 +152,9 @@ namespace project_m7
             control.Region = new Region(path);
         }
 
-        private void guna2TextBox1_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void guna2TextBox2_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void pictureBox1_Click_1(object sender, EventArgs e)
-        {
-        }
-
-        private void label2_Click_1(object sender, EventArgs e)
-        {
-        }
-
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
-            if (connection != null)
-            {
-                connection.Close();
-            }
             Application.Exit();
         }
     }

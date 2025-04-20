@@ -47,7 +47,6 @@ namespace project_m7
             this.guna2Button1.Size = new System.Drawing.Size(167, 44);
             this.guna2Button1.TabIndex = 4;
             this.guna2Button1.Text = "login";
-            this.guna2Button1.Click += new System.EventHandler(this.guna2Button1_Click);
             // 
             // guna2TextBox1
             // 
@@ -72,7 +71,6 @@ namespace project_m7
             this.guna2TextBox1.SelectedText = "";
             this.guna2TextBox1.Size = new System.Drawing.Size(368, 40);
             this.guna2TextBox1.TabIndex = 10;
-            this.guna2TextBox1.TextChanged += new System.EventHandler(this.guna2TextBox1_TextChanged);
             // 
             // label1
             // 
@@ -84,8 +82,7 @@ namespace project_m7
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(176, 17);
             this.label1.TabIndex = 7;
-            this.label1.Text = "Don’t have an account? ";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+            this.label1.Text = "Don't have an account? ";
             // 
             // labDel2
             // 
@@ -94,7 +91,6 @@ namespace project_m7
             this.labDel2.Name = "labDel2";
             this.labDel2.Size = new System.Drawing.Size(0, 13);
             this.labDel2.TabIndex = 8;
-            this.labDel2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label2
             // 
@@ -107,7 +103,6 @@ namespace project_m7
             this.label2.Size = new System.Drawing.Size(212, 50);
             this.label2.TabIndex = 9;
             this.label2.Text = "Welcome ";
-            this.label2.Click += new System.EventHandler(this.label2_Click_1);
             // 
             // guna2TextBox2
             // 
@@ -131,7 +126,6 @@ namespace project_m7
             this.guna2TextBox2.SelectedText = "";
             this.guna2TextBox2.Size = new System.Drawing.Size(368, 40);
             this.guna2TextBox2.TabIndex = 11;
-            this.guna2TextBox2.TextChanged += new System.EventHandler(this.guna2TextBox2_TextChanged);
             // 
             // linkLabel1
             // 
@@ -196,7 +190,6 @@ namespace project_m7
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "    ";
-            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.ResumeLayout(false);

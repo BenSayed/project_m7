@@ -61,57 +61,17 @@ namespace project_m7
         {
             try
             {
-                string query = @"
-                    SELECT 
-                        a.firstname,
-                        a.lastname,
-                        u.PhoneNumber,
-                        u.CardNumber,
-                        u.Email,
-                        u.id,
-                        ISNULL(u.Balance, 0) as Balance
-                    FROM accounts a
-                    JOIN user_details u ON a.cardnum = u.CardNumber
-                    WHERE a.cardnum = @CardNumber";
-
+                string query = "SELECT balance FROM accounts WHERE cardnum = @cardnum";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@CardNumber", cardNumber);
+                    command.Parameters.AddWithValue("@cardnum", cardNumber);
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            // Update welcome message
-                            linkLabel1.Text = reader["firstname"].ToString();
-                            
-                            // Update card number
-                            label7.Text = reader["CardNumber"].ToString();
-                            
-                            // Update phone number if available
-                            if (reader["PhoneNumber"] != DBNull.Value)
-                            {
-                                label10.Text = reader["PhoneNumber"].ToString();
-                            }
-                            
-                            // Update email if available
-                            if (reader["Email"] != DBNull.Value)
-                            {
-                                label19.Text = reader["Email"].ToString();
-                            }
-                            
                             // Update balance
-                            currentBalance = Convert.ToDecimal(reader["Balance"]);
-                            label9.Text = $"{currentBalance:N2}$";
-
-                            // Update full name
-                            label5.Text = reader["firstname"].ToString() + " " + reader["lastname"].ToString();
-                            
-                            // Update ID if available
-                            
-                                label9.Text = reader["Balance"].ToString();
-                            label4.Text = reader["id"].ToString();
-
-
+                            currentBalance = Convert.ToDecimal(reader["balance"]);
+                            label9.Text = $"{currentBalance:N2}$";  // Display actual balance
                         }
                         else
                         {
@@ -130,22 +90,18 @@ namespace project_m7
         {
             try
             {
-                string query = @"
-                    UPDATE user_details 
-                    SET Balance = Balance + @Amount 
-                    WHERE CardNumber = @CardNumber";
-
+                string query = "UPDATE accounts SET balance = balance + @amount WHERE cardnum = @cardnum";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     decimal adjustedAmount = isDeposit ? amount : -amount;
-                    command.Parameters.AddWithValue("@Amount", adjustedAmount);
-                    command.Parameters.AddWithValue("@CardNumber", cardNumber);
+                    command.Parameters.AddWithValue("@amount", adjustedAmount);
+                    command.Parameters.AddWithValue("@cardnum", cardNumber);
                     
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
                         currentBalance += adjustedAmount;
-                        label9.Text = $"{currentBalance:N2}$";
+                        label9.Text = $"{currentBalance:N2}$";  // Display updated balance
                         string action = isDeposit ? "Deposit" : "Withdrawal";
                         MessageBox.Show($"{action} successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
@@ -276,6 +232,7 @@ namespace project_m7
             {
                 connection.Close();
             }
+            Application.Exit();
         }
     }
 }
