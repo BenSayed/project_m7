@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
+using System.Windows.Forms;
 
 namespace project_m7
 {
@@ -28,11 +29,21 @@ namespace project_m7
                 connection.Open();
                 string createTableQuery = @"
                     IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'accounts')
-                    CREATE TABLE accounts (
-                        [cardnum] VARCHAR(16) PRIMARY KEY,
-                        [password] NVARCHAR(100) NOT NULL,
-                        [balance] DECIMAL(18,2) NOT NULL DEFAULT 0
-                    )";
+                    BEGIN
+                        CREATE TABLE accounts (
+                            [cardnum] VARCHAR(16) PRIMARY KEY,
+                            [password] NVARCHAR(100) NOT NULL,
+                            [balance] DECIMAL(18,2) NOT NULL DEFAULT 0
+                        )
+                    END
+                    ELSE
+                    BEGIN
+                        -- Check if balance column exists, if not add it
+                        IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('accounts') AND name = 'balance')
+                        BEGIN
+                            ALTER TABLE accounts ADD [balance] DECIMAL(18,2) NOT NULL DEFAULT 0
+                        END
+                    END";
                 using (SqlCommand command = new SqlCommand(createTableQuery, connection))
                 {
                     command.ExecuteNonQuery();
@@ -70,8 +81,8 @@ namespace project_m7
 
                     // Insert new user with default balance of 0
                     string insertQuery = @"
-                        INSERT INTO accounts (cardnum, password)
-                        VALUES (@cardnum, @password)";
+                        INSERT INTO accounts (cardnum, password, balance)
+                        VALUES (@cardnum, @password, 0)";
                     using (SqlCommand command = new SqlCommand(insertQuery, connection))
                     {
                         command.Parameters.AddWithValue("@cardnum", cardnum);
@@ -95,7 +106,7 @@ namespace project_m7
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = "SELECT password FROM accounts WHERE cardnum = @cardnum";
+                    string query = "SELECT password, balance FROM accounts WHERE cardnum = @cardnum";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@cardnum", cardnum);
@@ -167,6 +178,53 @@ namespace project_m7
             }
             catch (Exception)
             {
+                return false;
+            }
+        }
+
+        public bool VerifyCardNumber(string cardnum)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT COUNT(*) FROM accounts WHERE cardnum = @cardnum";
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@cardnum", cardnum);
+                        int count = (int)command.ExecuteScalar();
+                        return count > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error verifying card number: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        public bool UpdatePassword(string cardnum, string newPassword)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "UPDATE accounts SET password = @password WHERE cardnum = @cardnum";
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@password", newPassword);
+                        command.Parameters.AddWithValue("@cardnum", cardnum);
+                        int rowsAffected = command.ExecuteNonQuery();
+                        return rowsAffected > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating password: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }

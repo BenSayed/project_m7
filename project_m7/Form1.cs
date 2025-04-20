@@ -62,7 +62,8 @@ namespace project_m7
 
         private void LinkLabel2_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Please contact bank support to reset your password.", "Password Reset", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            PasswordResetForm resetForm = new PasswordResetForm();
+            resetForm.Show();
         }
            
         private void guna2Button1_Click(object sender, EventArgs e)
@@ -156,6 +157,11 @@ namespace project_m7
         {
             base.OnFormClosing(e);
             Application.Exit();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
