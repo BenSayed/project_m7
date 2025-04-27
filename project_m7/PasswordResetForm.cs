@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace project_m7
@@ -34,7 +27,7 @@ namespace project_m7
 
             // Set up button
             guna2Button1.Text = "Reset Password";
-            guna2Button1.Click += guna2Button1_Click;
+            guna2Button1.Click += ResetButton_Click;
 
             // Set form title
             this.Text = "Reset Password";
@@ -52,71 +45,39 @@ namespace project_m7
             guna2TextBox1.MaxLength = 16;
         }
 
-        private void guna2Button1_Click(object sender, EventArgs e)
+        private void ResetButton_Click(object sender, EventArgs e)
         {
-            try
+            string cardNumber = guna2TextBox1.Text.Trim();
+            string newPassword = guna2TextBox2.Text.Trim();
+            string confirmPassword = guna2TextBox3.Text.Trim();
+
+            if (string.IsNullOrEmpty(cardNumber) || string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
             {
-                string cardnum = guna2TextBox1.Text.Trim();
-                string newPassword = guna2TextBox2.Text.Trim();
-                string confirmPassword = guna2TextBox3.Text.Trim();
-
-                if (string.IsNullOrEmpty(cardnum))
-                {
-                    MessageBox.Show("Please enter your card number.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    guna2TextBox1.Focus();
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(newPassword))
-                {
-                    MessageBox.Show("Please enter your new password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    guna2TextBox2.Focus();
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(confirmPassword))
-                {
-                    MessageBox.Show("Please confirm your new password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    guna2TextBox3.Focus();
-                    return;
-                }
-
-                if (newPassword != confirmPassword)
-                {
-                    MessageBox.Show("Passwords do not match.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    guna2TextBox2.Text = "";
-                    guna2TextBox3.Text = "";
-                    guna2TextBox2.Focus();
-                    return;
-                }
-
-                if (cardnum.Length != 16)
-                {
-                    MessageBox.Show("Card number must be exactly 16 digits.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    guna2TextBox1.Focus();
-                    return;
-                }
-
-                if (!dbHelper.VerifyCardNumber(cardnum))
-                {
-                    MessageBox.Show("Card number not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    guna2TextBox1.Focus();
-                    return;
-                }
-
-                if (dbHelper.UpdatePassword(cardnum, newPassword))
-                {
-                    MessageBox.Show("Password reset successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    this.Close();
-                }
-                else
-                {
-                    MessageBox.Show("Failed to reset password. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                MessageBox.Show("Please fill in all fields", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
-            catch (Exception ex)
+
+            if (cardNumber.Length != 16)
             {
-                MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Card number must be exactly 16 digits", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (newPassword != confirmPassword)
+            {
+                MessageBox.Show("Passwords do not match", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var result = dbHelper.UpdatePassword(cardNumber, "", newPassword);
+            if (result.Success)
+            {
+                MessageBox.Show(result.Message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show(result.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
