@@ -25,7 +25,6 @@ namespace project_m7
             // Set up text boxes
             guna2TextBox1.PlaceholderText = "Enter First Name";
             guna2TextBox2.PlaceholderText = "Enter Last Name";
-            guna2TextBox6.PlaceholderText = "Enter Card Number";
             guna2TextBox5.PlaceholderText = "Enter Password";
             guna2TextBox3.PlaceholderText = "Confirm Password";
             
@@ -42,89 +41,55 @@ namespace project_m7
 
             // Set form title
             this.Text = "Create Account";
-
-            // Set up card number validation
-            guna2TextBox6.KeyPress += (sender, e) =>
-            {
-                if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                {
-                    e.Handled = true;
-                }
-            };
-
-            // Limit card number to 16 digits
-            guna2TextBox6.MaxLength = 16;
         }
 
         private void guna2Button1_Click(object sender, EventArgs e)
         {
             try
             {
-                string cardnum = guna2TextBox6.Text.Trim();
                 string password = guna2TextBox5.Text.Trim();
                 string confirmPassword = guna2TextBox3.Text.Trim();
 
-                if (string.IsNullOrEmpty(cardnum))
-                {
-                    MessageBox.Show("Please enter your card number.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    guna2TextBox6.Focus();
-                    return;
-                }
-
                 if (string.IsNullOrEmpty(password))
                 {
-                    MessageBox.Show("Please enter your password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     guna2TextBox5.Focus();
                     return;
                 }
 
                 if (string.IsNullOrEmpty(confirmPassword))
                 {
-                    MessageBox.Show("Please confirm your password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     guna2TextBox3.Focus();
                     return;
                 }
 
                 if (password != confirmPassword)
                 {
-                    MessageBox.Show("Passwords do not match.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     guna2TextBox5.Text = "";
                     guna2TextBox3.Text = "";
                     guna2TextBox5.Focus();
                     return;
                 }
 
-                if (cardnum.Length != 16)
-                {
-                    MessageBox.Show("Card number must be exactly 16 digits.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    guna2TextBox6.Focus();
-                    return;
-                }
+                // Generate random card number
+                string cardNumber = GenerateRandomCardNumber();
 
-                var registerResult = dbHelper.RegisterUser(cardnum, password);
+                var registerResult = dbHelper.RegisterUser(cardNumber, password);
                 if (registerResult.Success)
                 {
-                    MessageBox.Show("Registration successful! Your initial balance is 0.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"Your card number is: {cardNumber}\nPlease save this number for future use.", 
+                        "Card Number", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     Form1 form1 = new Form1();
                     form1.Show();
                     this.Hide();
                 }
                 else
                 {
-                    MessageBox.Show(registerResult.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    if (registerResult.Message.Contains("already exists"))
-                    {
-                        guna2TextBox6.Focus();
-                    }
-                    else
-                    {
-                        guna2TextBox5.Focus();
-                    }
+                    guna2TextBox5.Focus();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Handle error silently
             }
         }
 
@@ -161,9 +126,15 @@ namespace project_m7
             Application.Exit();
         }
 
-        private void guna2TextBox1_TextChanged(object sender, EventArgs e)
+        private string GenerateRandomCardNumber()
         {
-
+            Random random = new Random();
+            string cardNumber = "";
+            for (int i = 0; i < 16; i++)
+            {
+                cardNumber += random.Next(0, 10).ToString();
+            }
+            return cardNumber;
         }
     }
 }
