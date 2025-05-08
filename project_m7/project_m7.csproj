@@ -58,29 +58,53 @@
       <DependentUpon>Bank_appDataSet1.xsd</DependentUpon>
     </Compile>
     <Compile Include="DatabaseHelper.cs" />
+    <Compile Include="delet account.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="delet account.Designer.cs">
+      <DependentUpon>delet account.cs</DependentUpon>
+    </Compile>
     <Compile Include="Deposit.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Deposit.Designer.cs">
       <DependentUpon>Deposit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form1.cs">
+    <Compile Include="Donate.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Donate.Designer.cs">
+      <DependentUpon>Donate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form2.cs">
+    <Compile Include="history.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form2.Designer.cs">
-      <DependentUpon>Form2.cs</DependentUpon>
+    <Compile Include="history.Designer.cs">
+      <DependentUpon>history.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form3.cs">
+    <Compile Include="Home.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form3.Designer.cs">
-      <DependentUpon>Form3.cs</DependentUpon>
+    <Compile Include="Home.Designer.cs">
+      <DependentUpon>Home.cs</DependentUpon>
+    </Compile>
+    <Compile Include="login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="login.Designer.cs">
+      <DependentUpon>login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="sign_in.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="sign_in.Designer.cs">
+      <DependentUpon>sign_in.cs</DependentUpon>
+    </Compile>
+    <Compile Include="including_banking.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="including_banking.Designer.cs">
+      <DependentUpon>including_banking.cs</DependentUpon>
     </Compile>
     <Compile Include="PasswordResetForm.cs">
       <SubType>Form</SubType>
@@ -90,6 +114,24 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Report.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report.Designer.cs">
+      <DependentUpon>Report.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sittings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sittings.Designer.cs">
+      <DependentUpon>Sittings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="start.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="start.Designer.cs">
+      <DependentUpon>start.cs</DependentUpon>
+    </Compile>
     <Compile Include="Withdral.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -102,20 +144,38 @@
     <Compile Include="TransferForm.Designer.cs">
       <DependentUpon>TransferForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="delet account.resx">
+      <DependentUpon>delet account.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Deposit.resx">
       <DependentUpon>Deposit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="Donate.resx">
+      <DependentUpon>Donate.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form2.resx">
-      <DependentUpon>Form2.cs</DependentUpon>
+    <EmbeddedResource Include="Home.resx">
+      <DependentUpon>Home.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form3.resx">
-      <DependentUpon>Form3.cs</DependentUpon>
+    <EmbeddedResource Include="login.resx">
+      <DependentUpon>login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="sign_in.resx">
+      <DependentUpon>sign_in.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="including_banking.resx">
+      <DependentUpon>including_banking.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PasswordResetForm.resx">
       <DependentUpon>PasswordResetForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report.resx">
+      <DependentUpon>Report.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sittings.resx">
+      <DependentUpon>Sittings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="start.resx">
+      <DependentUpon>start.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Withdral.resx">
       <DependentUpon>Withdral.cs</DependentUpon>

@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace project_m7
 {
-    partial class Form1
+    partial class login
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -17,7 +17,7 @@ namespace project_m7
 
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(login));
             this.guna2Button1 = new Guna.UI2.WinForms.Guna2Button();
             this.guna2TextBox1 = new Guna.UI2.WinForms.Guna2TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -26,6 +26,7 @@ namespace project_m7
             this.guna2TextBox2 = new Guna.UI2.WinForms.Guna2TextBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.guna2Button2 = new Guna.UI2.WinForms.Guna2Button();
             this.SuspendLayout();
             // 
             // guna2Button1
@@ -38,12 +39,13 @@ namespace project_m7
             this.guna2Button1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(97)))), ((int)(((byte)(109)))));
             this.guna2Button1.Font = new System.Drawing.Font("Arial Rounded MT Bold", 15F);
             this.guna2Button1.ForeColor = System.Drawing.Color.White;
-            this.guna2Button1.Location = new System.Drawing.Point(440, 554);
-            this.guna2Button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.guna2Button1.Location = new System.Drawing.Point(420, 576);
+            this.guna2Button1.Margin = new System.Windows.Forms.Padding(4);
             this.guna2Button1.Name = "guna2Button1";
             this.guna2Button1.Size = new System.Drawing.Size(377, 85);
             this.guna2Button1.TabIndex = 4;
             this.guna2Button1.Text = "login";
+            this.guna2Button1.Click += new System.EventHandler(this.guna2Button1_Click);
             // 
             // guna2TextBox1
             // 
@@ -72,12 +74,12 @@ namespace project_m7
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Arial Rounded MT Bold", 9F);
+            this.label1.Font = new System.Drawing.Font("Arial Rounded MT Bold", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(97)))), ((int)(((byte)(109)))));
-            this.label1.Location = new System.Drawing.Point(399, 260);
+            this.label1.Location = new System.Drawing.Point(345, 244);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(285, 28);
+            this.label1.Size = new System.Drawing.Size(385, 37);
             this.label1.TabIndex = 7;
             this.label1.Text = "Don\'t have an account? ";
             // 
@@ -94,14 +96,14 @@ namespace project_m7
             // 
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Font = new System.Drawing.Font("Arial Rounded MT Bold", 28.125F);
+            this.label2.Font = new System.Drawing.Font("Arial Rounded MT Bold", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(97)))), ((int)(((byte)(109)))));
-            this.label2.Location = new System.Drawing.Point(408, 146);
+            this.label2.Location = new System.Drawing.Point(324, 122);
             this.label2.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(392, 87);
+            this.label2.Size = new System.Drawing.Size(545, 111);
             this.label2.TabIndex = 9;
-            this.label2.Text = "Welcome ";
+            this.label2.Text = "Login here";
             // 
             // guna2TextBox2
             // 
@@ -130,12 +132,12 @@ namespace project_m7
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Font = new System.Drawing.Font("Arial Rounded MT Bold", 9F);
+            this.linkLabel1.Font = new System.Drawing.Font("Arial Rounded MT Bold", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.linkLabel1.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(21)))), ((int)(((byte)(36)))));
-            this.linkLabel1.Location = new System.Drawing.Point(679, 260);
+            this.linkLabel1.Location = new System.Drawing.Point(717, 244);
             this.linkLabel1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(105, 28);
+            this.linkLabel1.Size = new System.Drawing.Size(141, 37);
             this.linkLabel1.TabIndex = 13;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Sign up ";
@@ -143,15 +145,32 @@ namespace project_m7
             // linkLabel2
             // 
             this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.999998F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.linkLabel2.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(21)))), ((int)(((byte)(36)))));
-            this.linkLabel2.Location = new System.Drawing.Point(277, 512);
+            this.linkLabel2.Location = new System.Drawing.Point(263, 509);
             this.linkLabel2.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(210, 29);
+            this.linkLabel2.Size = new System.Drawing.Size(272, 37);
             this.linkLabel2.TabIndex = 14;
             this.linkLabel2.TabStop = true;
             this.linkLabel2.Text = "Forget password";
+            // 
+            // guna2Button2
+            // 
+            this.guna2Button2.BorderColor = System.Drawing.Color.Transparent;
+            this.guna2Button2.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.guna2Button2.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.guna2Button2.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.guna2Button2.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.guna2Button2.FillColor = System.Drawing.Color.Transparent;
+            this.guna2Button2.Font = new System.Drawing.Font("Arial Rounded MT Bold", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.guna2Button2.ForeColor = System.Drawing.Color.Black;
+            this.guna2Button2.Location = new System.Drawing.Point(39, 35);
+            this.guna2Button2.Name = "guna2Button2";
+            this.guna2Button2.Size = new System.Drawing.Size(170, 45);
+            this.guna2Button2.TabIndex = 15;
+            this.guna2Button2.Text = "<== Back";
+            this.guna2Button2.Click += new System.EventHandler(this.guna2Button2_Click);
             // 
             // Form1
             // 
@@ -159,6 +178,7 @@ namespace project_m7
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(1180, 744);
+            this.Controls.Add(this.guna2Button2);
             this.Controls.Add(this.linkLabel2);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.guna2TextBox2);
@@ -168,9 +188,10 @@ namespace project_m7
             this.Controls.Add(this.guna2TextBox1);
             this.Controls.Add(this.guna2Button1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "login";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -185,5 +206,6 @@ namespace project_m7
         private Guna.UI2.WinForms.Guna2TextBox guna2TextBox2;
         private LinkLabel linkLabel1;
         private LinkLabel linkLabel2;
+        private Guna.UI2.WinForms.Guna2Button guna2Button2;
     }
 }

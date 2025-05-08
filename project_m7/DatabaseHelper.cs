@@ -2,26 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Guna.UI2.WinForms;
 
 namespace project_m7
 {
+
+    //massage
     public class AuthResult
     {
         public bool Success { get; set; }
         public string Message { get; set; }
     }
 
-    public class Transaction
-    {
-        public int Id { get; set; }
-        public string CardNumber { get; set; }
-        public string Type { get; set; }
-        public decimal Amount { get; set; }
-        public decimal BalanceAfter { get; set; }
-        public DateTime Date { get; set; }
-    }
+   
 
+
+
+
+
+
+
+    //database init
     public class DatabaseHelper
     {
         private readonly string connectionString = "Data Source=HASSAN;Initial Catalog=Bank_app;Integrated Security=True;TrustServerCertificate=True";
@@ -36,39 +39,66 @@ namespace project_m7
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
+                {
+                    connection.Open();
 
-                        string createAccountsQuery = @"
-                            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'accounts')
+                    string createAccountsQuery = @"
+                        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'accounts')
+                        BEGIN
+                            CREATE TABLE accounts (
+                                cardnum NVARCHAR(50) PRIMARY KEY,
+                                firstname NVARCHAR(100) NOT NULL,
+                                lastname NVARCHAR(100) NOT NULL,
+                                password NVARCHAR(100) NOT NULL,
+                                balance DECIMAL(18,2) NOT NULL DEFAULT 0,
+                                is_enabled BIT NOT NULL DEFAULT 1,
+                               
+
+                            )
+                        END
+                        ELSE
+                        BEGIN
+                            IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('accounts') AND name = 'firstname')
                             BEGIN
-                                CREATE TABLE accounts (
-                                    cardnum NVARCHAR(50) PRIMARY KEY,
-                                    password NVARCHAR(100) NOT NULL,
-                                    balance DECIMAL(18,2) NOT NULL DEFAULT 0
-                                )
-                            END";
-                        using (SqlCommand command = new SqlCommand(createAccountsQuery, connection))
-                        {
-                            command.ExecuteNonQuery();
+                                ALTER TABLE accounts ADD firstname NVARCHAR(100) NOT NULL DEFAULT ''
+                            END
+                            IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('accounts') AND name = 'lastname')
+                            BEGIN
+                                ALTER TABLE accounts ADD lastname NVARCHAR(100) NOT NULL DEFAULT ''
+                            END
+                            IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('accounts') AND name = 'is_enabled')
+                            BEGIN
+                                ALTER TABLE accounts ADD is_enabled BIT NOT NULL DEFAULT 1
+                            END
+                            IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('accounts') AND name = 'phone_number')
+                            BEGIN
+                                ALTER TABLE accounts ADD phone_number NVARCHAR(11) NOT NULL DEFAULT ''
+                            END
+                        END";
+                    using (SqlCommand command = new SqlCommand(createAccountsQuery, connection))
+                    {
+                        command.ExecuteNonQuery();
                     }
-                    
-                        string createTransactionsQuery = @"
-                            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'transactions')
-                            BEGIN
-                                CREATE TABLE transactions (
-                                    id INT IDENTITY(1,1) PRIMARY KEY,
-                                    cardnum NVARCHAR(50) NOT NULL,
-                                    type NVARCHAR(50) NOT NULL,
-                                    amount DECIMAL(18,2) NOT NULL,
-                                    balance_after DECIMAL(18,2) NOT NULL,
+
+                    // Create Transactions table if it doesn't exist
+                    string createTransactionsQuery = @"
+                        IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'transactions')
+                        BEGIN
+                            CREATE TABLE transactions (
+                                transaction_id INT IDENTITY(1,1) PRIMARY KEY,
+                                cardnum NVARCHAR(50) NOT NULL,
+                                transaction_type NVARCHAR(50) NOT NULL,
+                                amount DECIMAL(18,2) NOT NULL,
                                 transaction_date DATETIME NOT NULL DEFAULT GETDATE(),
-                                CONSTRAINT FK_transactions_accounts FOREIGN KEY (cardnum) REFERENCES accounts(cardnum)
-                                )
-                            END";
-                        using (SqlCommand command = new SqlCommand(createTransactionsQuery, connection))
-                        {
-                            command.ExecuteNonQuery();
+                                balance_after DECIMAL(18,2) NOT NULL,
+                                destination_cardnum NVARCHAR(50) NULL,
+                                description NVARCHAR(255) NULL,
+                                FOREIGN KEY (cardnum) REFERENCES accounts(cardnum)
+                            )
+                        END";
+                    using (SqlCommand command = new SqlCommand(createTransactionsQuery, connection))
+                    {
+                        command.ExecuteNonQuery();
                     }
                 }
             }
@@ -120,18 +150,28 @@ namespace project_m7
             }
         }
 
-        public AuthResult RegisterUser(string cardnum, string password)
+
+
+
+
+
+        //Register
+        public AuthResult RegisterUser(string cardnum, string firstname, string lastname, string password, string phone)
         {
             try
             {
-                if (string.IsNullOrEmpty(cardnum) || string.IsNullOrEmpty(password))
+                if (string.IsNullOrEmpty(cardnum) || string.IsNullOrEmpty(password) || 
+                    string.IsNullOrEmpty(firstname) || string.IsNullOrEmpty(lastname) || string.IsNullOrEmpty(phone))
                 {
-                    return new AuthResult { Success = false, Message = "Card number and password are required" };
+                    return new AuthResult { Success = false, Message = "All fields are required" };
                 }
                 
+                // Validate phone number
+                
+                
                 using (var connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
+                {
+                    connection.Open();
 
                     string checkQuery = "SELECT COUNT(*) FROM accounts WHERE cardnum = @cardnum";
                     using (var checkCommand = new SqlCommand(checkQuery, connection))
@@ -144,16 +184,29 @@ namespace project_m7
                             return new AuthResult { Success = false, Message = "Card number already exists" };
                         }
                     }
-
-                    string insertQuery = "INSERT INTO accounts (cardnum, password, balance) VALUES (@cardnum, @password, 0)";
+                    
+                    // Format the phone number to store only digits
+                   
+                    
+                    string insertQuery = "INSERT INTO accounts (cardnum, firstname, lastname, password, balance, phone_number) VALUES (@cardnum, @firstname, @lastname, @password, 0, @phone)";
                     using (var insertCommand = new SqlCommand(insertQuery, connection))
                     {
                         insertCommand.Parameters.Add("@cardnum", SqlDbType.NVarChar, 50).Value = cardnum;
+                        insertCommand.Parameters.Add("@firstname", SqlDbType.NVarChar, 100).Value = firstname;
+                        insertCommand.Parameters.Add("@lastname", SqlDbType.NVarChar, 100).Value = lastname;
                         insertCommand.Parameters.Add("@password", SqlDbType.NVarChar, 100).Value = password;
-                        insertCommand.ExecuteNonQuery();
-                    }
+                        insertCommand.Parameters.Add("@phone", SqlDbType.NVarChar, 11).Value = phone;
+                        int rowsAffected = insertCommand.ExecuteNonQuery();
 
-                    return new AuthResult { Success = true, Message = "Registration successful" };
+                        if (rowsAffected > 0)
+                        {
+                            return new AuthResult { Success = true, Message = "Registration successful" };
+                        }
+                        else
+                        {
+                            return new AuthResult { Success = false, Message = "Failed to create account" };
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -162,6 +215,8 @@ namespace project_m7
             }
         }
 
+      
+        //card number check
         public bool VerifyCardNumber(string cardnum)
         {
             try
@@ -190,6 +245,12 @@ namespace project_m7
             }
         }
 
+
+
+
+
+
+        //get balance for deposit and withdral and transfare
         public decimal GetBalance(string cardnum)
         {
             try
@@ -213,45 +274,8 @@ namespace project_m7
             }
         }
 
-        public List<Transaction> GetTransactionHistory(string cardnum)
-        {
-            List<Transaction> transactions = new List<Transaction>();
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
-                    string query = "SELECT id, cardnum, type, amount, balance_after, transaction_date " +
-                                   "FROM transactions WHERE cardnum = @cardnum " +
-                                   "ORDER BY transaction_date DESC";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@cardnum", cardnum);
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                transactions.Add(new Transaction
-                                {
-                                    Id = Convert.ToInt32(reader["id"]),
-                                    CardNumber = reader["cardnum"].ToString(),
-                                    Type = reader["type"].ToString(),
-                                    Amount = Convert.ToDecimal(reader["amount"]),
-                                    BalanceAfter = Convert.ToDecimal(reader["balance_after"]),
-                                    Date = Convert.ToDateTime(reader["transaction_date"])
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error getting transaction history: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            return transactions;
-        }
-
+       
+        //for forgeting password
         public AuthResult UpdatePassword(string cardnum, string oldPassword, string newPassword)
         {
             try
@@ -294,94 +318,259 @@ namespace project_m7
             }
         }
 
-        public bool Deposit(string cardnum, decimal amount)
+
+
+
+
+        //deposit process
+        public bool Deposit(string cardNumber, decimal amount)
         {
-            try
+            if (!IsCardEnabled(cardNumber))
             {
-                if (string.IsNullOrEmpty(cardnum) || amount <= 0)
-                {
-                    return false;
-                }
-                
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    string checkQuery = "SELECT balance FROM accounts WHERE cardnum = @cardnum";
-                    using (var checkCommand = new SqlCommand(checkQuery, connection))
-                    {
-                        checkCommand.Parameters.Add("@cardnum", SqlDbType.NVarChar, 50).Value = cardnum;
-                        var result = checkCommand.ExecuteScalar();
-
-                        if (result == null)
-                        {
-                            return false;
-                        }
-
-                        decimal currentBalance = Convert.ToDecimal(result);
-                        decimal depositAmount = amount / 2; // تقسيم المبلغ على 2 للإيداع
-                        decimal newBalance = currentBalance + depositAmount;
-
-                        string updateQuery = "UPDATE accounts SET balance = @newBalance WHERE cardnum = @cardnum";
-                        using (var updateCommand = new SqlCommand(updateQuery, connection))
-                        {
-                            updateCommand.Parameters.Add("@newBalance", SqlDbType.Decimal).Value = newBalance;
-                            updateCommand.Parameters.Add("@cardnum", SqlDbType.NVarChar, 50).Value = cardnum;
-                            updateCommand.ExecuteNonQuery();
-                        }
-
-                        return true;
-                    }
-                }
-            }
-            catch (Exception)
-            {
+                MessageBox.Show("لا يمكنك إيداع الأموال لأن البطاقة معطلة", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
-        }
 
-        public bool Withdraw(string cardnum, decimal amount)
-        {
             try
             {
-                if (string.IsNullOrEmpty(cardnum) || amount <= 0)
-                {
-                    return false;
-                }
-
-                using (var connection = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
                     
-                    string checkQuery = "SELECT balance FROM accounts WHERE cardnum = @cardnum";
-                    using (var checkCommand = new SqlCommand(checkQuery, connection))
+                    // Get current balance before update
+                    decimal currentBalance = 0;
+                    string balanceQuery = "SELECT balance FROM accounts WHERE cardnum = @cardnum";
+                    using (SqlCommand balanceCommand = new SqlCommand(balanceQuery, connection))
                     {
-                        checkCommand.Parameters.Add("@cardnum", SqlDbType.NVarChar, 50).Value = cardnum;
-                        var result = checkCommand.ExecuteScalar();
+                        balanceCommand.Parameters.AddWithValue("@cardnum", cardNumber);
+                        var result = balanceCommand.ExecuteScalar();
+                        currentBalance = result != null ? Convert.ToDecimal(result) : 0;
+                    }
+                    
+                    // Update the balance
+                    string updateQuery = "UPDATE accounts SET balance = balance + @amount WHERE cardnum = @cardnum";
+                    using (SqlCommand updateCommand = new SqlCommand(updateQuery, connection))
+                    {
+                        updateCommand.Parameters.AddWithValue("@amount", amount);
+                        updateCommand.Parameters.AddWithValue("@cardnum", cardNumber);
+                        int rowsAffected = updateCommand.ExecuteNonQuery();
+                        
+                        if (rowsAffected > 0)
+                        {
+                            // Record the transaction
+                            decimal newBalance = currentBalance + amount;
+                            RecordTransaction(connection, cardNumber, "Deposit", amount, newBalance, null, "Cash deposit");
+                            return true;
+                        }
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"حدث خطأ: {ex.Message}", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
 
+        //Withdrawal process
+        public bool Withdraw(string cardNumber, decimal amount)
+        {
+            if (!IsCardEnabled(cardNumber))
+            {
+                MessageBox.Show("لا يمكنك سحب الأموال لأن البطاقة معطلة", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    
+                    // Check if there's enough balance
+                    string query = "SELECT balance FROM accounts WHERE cardnum = @cardnum";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@cardnum", cardNumber);
+                        var result = command.ExecuteScalar();
+                        
                         if (result == null)
                         {
+                            MessageBox.Show("لم يتم العثور على الحساب", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return false;
                         }
-
+                        
                         decimal currentBalance = Convert.ToDecimal(result);
-
-                        if (amount > currentBalance)
+                        
+                        if (currentBalance < amount)
                         {
+                            MessageBox.Show("رصيدك غير كافٍ", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return false;
                         }
 
-                        decimal newBalance = currentBalance - amount;
-
-                        string updateQuery = "UPDATE accounts SET balance = @newBalance WHERE cardnum = @cardnum";
-                        using (var updateCommand = new SqlCommand(updateQuery, connection))
+                        // Perform the withdrawal
+                        string updateQuery = "UPDATE accounts SET balance = balance - @amount WHERE cardnum = @cardnum";
+                        using (SqlCommand updateCommand = new SqlCommand(updateQuery, connection))
                         {
-                            updateCommand.Parameters.Add("@newBalance", SqlDbType.Decimal).Value = newBalance;
-                            updateCommand.Parameters.Add("@cardnum", SqlDbType.NVarChar, 50).Value = cardnum;
-                            updateCommand.ExecuteNonQuery();
+                            updateCommand.Parameters.AddWithValue("@amount", amount);
+                            updateCommand.Parameters.AddWithValue("@cardnum", cardNumber);
+                            int rowsAffected = updateCommand.ExecuteNonQuery();
+                            
+                            if (rowsAffected > 0)
+                            {
+                                // Calculate new balance
+                                decimal newBalance = currentBalance - amount;
+                                
+                                // Record the transaction
+                                RecordTransaction(connection, cardNumber, "Withdrawal", amount, newBalance, null, "Cash withdrawal");
+                                return true;
+                            }
+                            return false;
                         }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"حدث خطأ: {ex.Message}", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
 
-                        return true;
+
+
+       // transfer process
+        public bool TransferMoney(string sourceCardNumber, string destinationCardNumber, decimal amount)
+        {
+            if (!IsCardEnabled(sourceCardNumber))
+            {
+                MessageBox.Show("لا يمكنك تحويل الأموال لأن البطاقة معطلة", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    using (SqlTransaction transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            // Check source account balance
+                            decimal sourceCurrentBalance = 0;
+                            string checkBalanceQuery = "SELECT balance FROM accounts WHERE cardnum = @cardnum";
+                            using (SqlCommand command = new SqlCommand(checkBalanceQuery, connection, transaction))
+                            {
+                                command.Parameters.AddWithValue("@cardnum", sourceCardNumber);
+                                var result = command.ExecuteScalar();
+                                sourceCurrentBalance = result != null ? Convert.ToDecimal(result) : 0;
+
+                                if (sourceCurrentBalance < amount)
+                                {
+                                    MessageBox.Show("رصيدك غير كافٍ", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    transaction.Rollback();
+                                    return false;
+                                }
+                            }
+
+                            // Get destination account balance before update
+                            decimal destCurrentBalance = 0;
+                            using (SqlCommand command = new SqlCommand(checkBalanceQuery, connection, transaction))
+                            {
+                                command.Parameters.AddWithValue("@cardnum", destinationCardNumber);
+                                var result = command.ExecuteScalar();
+                                destCurrentBalance = result != null ? Convert.ToDecimal(result) : 0;
+                            }
+
+                            // Deduct from source account
+                            string deductQuery = "UPDATE accounts SET balance = balance - @amount WHERE cardnum = @cardnum";
+                            using (SqlCommand command = new SqlCommand(deductQuery, connection, transaction))
+                            {
+                                command.Parameters.AddWithValue("@amount", amount);
+                                command.Parameters.AddWithValue("@cardnum", sourceCardNumber);
+                                command.ExecuteNonQuery();
+                            }
+
+                            // Add to destination account
+                            string addQuery = "UPDATE accounts SET balance = balance + @amount WHERE cardnum = @cardnum";
+                            using (SqlCommand command = new SqlCommand(addQuery, connection, transaction))
+                            {
+                                command.Parameters.AddWithValue("@amount", amount);
+                                command.Parameters.AddWithValue("@cardnum", destinationCardNumber);
+                                command.ExecuteNonQuery();
+                            }
+
+                            // Record transaction for source account (money sent)
+                            decimal sourceNewBalance = sourceCurrentBalance - amount;
+                            string recordSourceQuery = @"
+                                INSERT INTO transactions (cardnum, transaction_type, amount, transaction_date, balance_after, destination_cardnum, description)
+                                VALUES (@cardnum, @transactionType, @amount, GETDATE(), @balanceAfter, @destinationCardnum, @description)
+                            ";
+                            using (SqlCommand command = new SqlCommand(recordSourceQuery, connection, transaction))
+                            {
+                                command.Parameters.AddWithValue("@cardnum", sourceCardNumber);
+                                command.Parameters.AddWithValue("@transactionType", "Transfer Out");
+                                command.Parameters.AddWithValue("@amount", amount);
+                                command.Parameters.AddWithValue("@balanceAfter", sourceNewBalance);
+                                command.Parameters.AddWithValue("@destinationCardnum", destinationCardNumber);
+                                command.Parameters.AddWithValue("@description", "Money transfer to another account");
+                                command.ExecuteNonQuery();
+                            }
+
+                            // Record transaction for destination account (money received)
+                            decimal destNewBalance = destCurrentBalance + amount;
+                            string recordDestQuery = @"
+                                INSERT INTO transactions (cardnum, transaction_type, amount, transaction_date, balance_after, destination_cardnum, description)
+                                VALUES (@cardnum, @transactionType, @amount, GETDATE(), @balanceAfter, @destinationCardnum, @description)
+                            ";
+                            using (SqlCommand command = new SqlCommand(recordDestQuery, connection, transaction))
+                            {
+                                command.Parameters.AddWithValue("@cardnum", destinationCardNumber);
+                                command.Parameters.AddWithValue("@transactionType", "Transfer In");
+                                command.Parameters.AddWithValue("@amount", amount);
+                                command.Parameters.AddWithValue("@balanceAfter", destNewBalance);
+                                command.Parameters.AddWithValue("@destinationCardnum", sourceCardNumber);
+                                command.Parameters.AddWithValue("@description", "Money received from another account");
+                                command.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+                            return true;
+                        }
+                        catch (Exception)
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"حدث خطأ: {ex.Message}", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+
+
+        //password check
+        public bool VerifyPassword(string cardNumber, string password)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT COUNT(*) FROM accounts WHERE cardnum = @cardnum AND password = @password";
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add("@cardnum", SqlDbType.NVarChar, 50).Value = cardNumber;
+                        command.Parameters.Add("@password", SqlDbType.NVarChar, 100).Value = password;
+                        int count = Convert.ToInt32(command.ExecuteScalar());
+                        return count > 0;
                     }
                 }
             }
@@ -389,9 +578,15 @@ namespace project_m7
             {
                 return false;
             }
-        }
+        } 
 
-        public bool TransferMoney(string sourceCardNumber, string destinationCardNumber, decimal amount)
+
+
+
+
+
+        //delete account
+        public bool DeleteAccount(string cardNumber)
         {
             try
             {
@@ -402,103 +597,28 @@ namespace project_m7
                     {
                         try
                         {
-                            // التحقق من وجود الحساب المصدر
-                            string checkSourceQuery = "SELECT COUNT(*) FROM accounts WHERE cardnum = @sourceCardNumber";
-                            using (var checkSourceCommand = new SqlCommand(checkSourceQuery, connection, transaction))
+                            // حذف جميع المعاملات المرتبطة بالحساب
+                            string deleteTransactionsQuery = "DELETE FROM transactions WHERE cardnum = @cardnum";
+                            using (var command = new SqlCommand(deleteTransactionsQuery, connection, transaction))
                             {
-                                checkSourceCommand.Parameters.Add("@sourceCardNumber", SqlDbType.NVarChar, 50).Value = sourceCardNumber;
-                                int sourceCount = Convert.ToInt32(checkSourceCommand.ExecuteScalar());
-                                if (sourceCount == 0)
-                                {
-                                    transaction.Rollback();
-                                    return false;
-                                }
+                                command.Parameters.Add("@cardnum", SqlDbType.NVarChar, 50).Value = cardNumber;
+                                command.ExecuteNonQuery();
                             }
 
-                            // التحقق من وجود الحساب الهدف
-                            string checkDestinationQuery = "SELECT COUNT(*) FROM accounts WHERE cardnum = @destinationCardNumber";
-                            using (var checkDestinationCommand = new SqlCommand(checkDestinationQuery, connection, transaction))
+                            // حذف الحساب
+                            string deleteAccountQuery = "DELETE FROM accounts WHERE cardnum = @cardnum";
+                            using (var command = new SqlCommand(deleteAccountQuery, connection, transaction))
                             {
-                                checkDestinationCommand.Parameters.Add("@destinationCardNumber", SqlDbType.NVarChar, 50).Value = destinationCardNumber;
-                                int destinationCount = Convert.ToInt32(checkDestinationCommand.ExecuteScalar());
-                                if (destinationCount == 0)
+                                command.Parameters.Add("@cardnum", SqlDbType.NVarChar, 50).Value = cardNumber;
+                                int rowsAffected = command.ExecuteNonQuery();
+                                if (rowsAffected > 0)
                                 {
-                                    transaction.Rollback();
-                                    return false;
+                                    transaction.Commit();
+                                    return true;
                                 }
                             }
-
-                            // التحقق من رصيد الحساب المصدر
-                            string checkBalanceQuery = "SELECT balance FROM accounts WHERE cardnum = @sourceCardNumber";
-                            decimal sourceBalance;
-                            using (var checkCommand = new SqlCommand(checkBalanceQuery, connection, transaction))
-                            {
-                                checkCommand.Parameters.Add("@sourceCardNumber", SqlDbType.NVarChar, 50).Value = sourceCardNumber;
-                                sourceBalance = Convert.ToDecimal(checkCommand.ExecuteScalar());
-
-                                if (amount > sourceBalance)
-                                {
-                                    transaction.Rollback();
-                                    return false;
-                                }
-                            }
-
-                            // خصم المبلغ من الحساب المصدر
-                            string withdrawQuery = "UPDATE accounts SET balance = balance - @amount WHERE cardnum = @sourceCardNumber";
-                            using (var withdrawCommand = new SqlCommand(withdrawQuery, connection, transaction))
-                            {
-                                withdrawCommand.Parameters.Add("@amount", SqlDbType.Decimal).Value = amount;
-                                withdrawCommand.Parameters.Add("@sourceCardNumber", SqlDbType.NVarChar, 50).Value = sourceCardNumber;
-                                int rowsAffected = withdrawCommand.ExecuteNonQuery();
-                                if (rowsAffected != 1)
-                                {
-                                    transaction.Rollback();
-                                    return false;
-                                }
-                            }
-
-                            // التحقق من الرصيد بعد الخصم
-                            string verifySourceBalanceQuery = "SELECT balance FROM accounts WHERE cardnum = @sourceCardNumber";
-                            using (var verifyCommand = new SqlCommand(verifySourceBalanceQuery, connection, transaction))
-                            {
-                                verifyCommand.Parameters.Add("@sourceCardNumber", SqlDbType.NVarChar, 50).Value = sourceCardNumber;
-                                decimal newSourceBalance = Convert.ToDecimal(verifyCommand.ExecuteScalar());
-                                if (newSourceBalance != sourceBalance - amount)
-                                {
-                                    transaction.Rollback();
-                                    return false;
-                                }
-                            }
-
-                            // إضافة المبلغ للحساب الهدف
-                            string depositQuery = "UPDATE accounts SET balance = balance + @amount WHERE cardnum = @destinationCardNumber";
-                            using (var depositCommand = new SqlCommand(depositQuery, connection, transaction))
-                            {
-                                depositCommand.Parameters.Add("@amount", SqlDbType.Decimal).Value = amount;
-                                depositCommand.Parameters.Add("@destinationCardNumber", SqlDbType.NVarChar, 50).Value = destinationCardNumber;
-                                int rowsAffected = depositCommand.ExecuteNonQuery();
-                                if (rowsAffected != 1)
-                                {
-                                    transaction.Rollback();
-                                    return false;
-                                }
-                            }
-
-                            // التحقق من الرصيد بعد الإضافة
-                            string verifyDestinationBalanceQuery = "SELECT balance FROM accounts WHERE cardnum = @destinationCardNumber";
-                            using (var verifyCommand = new SqlCommand(verifyDestinationBalanceQuery, connection, transaction))
-                            {
-                                verifyCommand.Parameters.Add("@destinationCardNumber", SqlDbType.NVarChar, 50).Value = destinationCardNumber;
-                                decimal newDestinationBalance = Convert.ToDecimal(verifyCommand.ExecuteScalar());
-                                if (newDestinationBalance <= 0)
-                                {
-                                    transaction.Rollback();
-                                    return false;
-                                }
-                            }
-
-                            transaction.Commit();
-                            return true;
+                            transaction.Rollback();
+                            return false;
                         }
                         catch (Exception)
                         {
@@ -513,5 +633,233 @@ namespace project_m7
                 return false;
             }
         }
+
+        
+        
+        
+        
+        //disable card
+        public bool DisableCard(string cardNumber)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "UPDATE accounts SET is_enabled = 0 WHERE cardnum = @cardnum";
+                    using (var command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add("@cardnum", SqlDbType.NVarChar, 50).Value = cardNumber;
+                        int rowsAffected = command.ExecuteNonQuery();
+                        return rowsAffected > 0;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+
+
+
+
+
+        //check in settings
+        public bool ToggleCardStatus(string cardNumber, string password)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    
+                    // First verify the password
+                    string verifyQuery = "SELECT COUNT(*) FROM accounts WHERE cardnum = @cardnum AND password = @password";
+                    using (SqlCommand verifyCommand = new SqlCommand(verifyQuery, connection))
+                    {
+                        verifyCommand.Parameters.AddWithValue("@cardnum", cardNumber);
+                        verifyCommand.Parameters.AddWithValue("@password", password);
+                        int count = Convert.ToInt32(verifyCommand.ExecuteScalar());
+                        
+                        if (count == 0)
+                        {
+                            MessageBox.Show("Incorrect password", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return false;
+                        }
+                    }
+
+                    // Get current status (0 = disabled, 1 = enabled)
+                    string statusQuery = "SELECT is_enabled FROM accounts WHERE cardnum = @cardnum";
+                    int currentStatus;
+                    using (SqlCommand statusCommand = new SqlCommand(statusQuery, connection))
+                    {
+                        statusCommand.Parameters.AddWithValue("@cardnum", cardNumber);
+                        currentStatus = Convert.ToInt32(statusCommand.ExecuteScalar());
+                    }
+
+                    // Toggle the status
+                    string updateQuery = "UPDATE accounts SET is_enabled = @newStatus WHERE cardnum = @cardnum";
+                    using (SqlCommand updateCommand = new SqlCommand(updateQuery, connection))
+                    {
+                        int newStatus = currentStatus == 1 ? 0 : 1; // Toggle between 0 and 1
+                        updateCommand.Parameters.AddWithValue("@newStatus", newStatus);
+                        updateCommand.Parameters.AddWithValue("@cardnum", cardNumber);
+                        int rowsAffected = updateCommand.ExecuteNonQuery();
+                        
+                        if (rowsAffected > 0)
+                        {
+                            string message = currentStatus == 1 ? 
+                                "Card has been disabled successfully" : 
+                                "Card has been enabled successfully";
+                            MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return false;
+        }
+
+
+
+        //check the card is active
+        public bool IsCardEnabled(string cardNumber)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT is_enabled FROM accounts WHERE cardnum = @cardnum";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@cardnum", cardNumber);
+                    object result = command.ExecuteScalar();
+                    return result != null && Convert.ToBoolean(result);
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+        //Donate process
+        // Helper method to record transactions
+        private bool RecordTransaction(SqlConnection connection, string cardnum, string transactionType, decimal amount, decimal balanceAfter, string destinationCardnum = null, string description = null)
+        {
+            try
+            {
+                string query = @"
+                    INSERT INTO transactions (cardnum, transaction_type, amount, transaction_date, balance_after, destination_cardnum, description)
+                    VALUES (@cardnum, @transactionType, @amount, GETDATE(), @balanceAfter, @destinationCardnum, @description)
+                ";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@cardnum", cardnum);
+                    command.Parameters.AddWithValue("@transactionType", transactionType);
+                    command.Parameters.AddWithValue("@amount", amount);
+                    command.Parameters.AddWithValue("@balanceAfter", balanceAfter);
+                    command.Parameters.AddWithValue("@destinationCardnum", destinationCardnum ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@description", description ?? (object)DBNull.Value);
+
+                    return command.ExecuteNonQuery() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error recording transaction: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        public AuthResult Donate(string cardnum, string password, decimal amount)
+        {
+            try
+            {
+                // Validate inputs
+                if (string.IsNullOrEmpty(cardnum) || string.IsNullOrEmpty(password) || amount <= 0)
+                {
+                    return new AuthResult { Success = false, Message = "Invalid donation information" };
+                }
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    // Verify the password
+                    string verifyQuery = "SELECT COUNT(*) FROM accounts WHERE cardnum = @cardnum AND password = @password";
+                    using (SqlCommand verifyCommand = new SqlCommand(verifyQuery, connection))
+                    {
+                        verifyCommand.Parameters.Add("@cardnum", SqlDbType.NVarChar, 50).Value = cardnum;
+                        verifyCommand.Parameters.Add("@password", SqlDbType.NVarChar, 100).Value = password;
+                        int count = Convert.ToInt32(verifyCommand.ExecuteScalar());
+
+                        if (count == 0)
+                        {
+                            return new AuthResult { Success = false, Message = "Invalid card number or password" };
+                        }
+                    }
+
+                    // Check if the account has sufficient balance
+                    string balanceQuery = "SELECT balance FROM accounts WHERE cardnum = @cardnum";
+                    decimal currentBalance = 0;
+
+                    using (SqlCommand balanceCommand = new SqlCommand(balanceQuery, connection))
+                    {
+                        balanceCommand.Parameters.Add("@cardnum", SqlDbType.NVarChar, 50).Value = cardnum;
+                        var result = balanceCommand.ExecuteScalar();
+                        currentBalance = result != null ? Convert.ToDecimal(result) : 0;
+
+                        if (currentBalance < amount)
+                        {
+                            return new AuthResult { Success = false, Message = "Insufficient balance for donation" };
+                        }
+                    }
+
+                    // Update the balance
+                    decimal newBalance = currentBalance - amount;
+                    string updateQuery = "UPDATE accounts SET balance = @newBalance WHERE cardnum = @cardnum";
+
+                    using (SqlCommand updateCommand = new SqlCommand(updateQuery, connection))
+                    {
+                        updateCommand.Parameters.Add("@newBalance", SqlDbType.Decimal).Value = newBalance;
+                        updateCommand.Parameters.Add("@cardnum", SqlDbType.NVarChar, 50).Value = cardnum;
+                        int rowsAffected = updateCommand.ExecuteNonQuery();
+
+                        if (rowsAffected == 0)
+                        {
+                            return new AuthResult { Success = false, Message = "Failed to process donation" };
+                        }
+                    }
+
+                    // Record the transaction
+                    RecordTransaction(connection, cardnum, "Donation", amount, newBalance, null, "Charitable donation");
+
+                    return new AuthResult
+                    {
+                        Success = true,
+                        Message = $"Thank you for your donation of {amount:C}! Your new balance is {newBalance:C}."
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new AuthResult { Success = false, Message = $"Error processing donation: {ex.Message}" };
+            }
+        }
+
+
+
+
     }
 }
+

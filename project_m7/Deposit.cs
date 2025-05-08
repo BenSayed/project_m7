@@ -6,7 +6,7 @@ namespace project_m7
     public partial class Deposit : Form
     {
         private readonly DatabaseHelper dbHelper;
-        private decimal currentBalance;
+       
         private string cardNum;
 
         public Deposit()
@@ -106,7 +106,7 @@ namespace project_m7
                 return;
             }
 
-            var result = dbHelper.Deposit(cardNumber, amount);
+            var result = dbHelper.Deposit(cardNumber, amount/2);
             if (result)
             {
                 this.Close();
@@ -115,6 +115,11 @@ namespace project_m7
             {
                 MessageBox.Show("Failed to process deposit", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void Deposit_Load(object sender, EventArgs e)
+        {
+
         }
     }
 } 

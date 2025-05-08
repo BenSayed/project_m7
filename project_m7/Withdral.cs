@@ -6,7 +6,7 @@ namespace project_m7
     public partial class Withdral : Form
     {
         private readonly DatabaseHelper dbHelper;
-        private decimal currentBalance;
+        
         private string cardNum;
 
         public Withdral()
@@ -84,6 +84,11 @@ namespace project_m7
             {
                 MessageBox.Show("Failed to process withdrawal", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void Withdral_Load(object sender, EventArgs e)
+        {
+
         }
     }
 } 

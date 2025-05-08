@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,7 +13,7 @@ using project_m7;
 
 namespace project_m7
 {
-    public partial class Form3 : Form
+    public partial class including_banking : Form
     {
         private string cardNumber;
         private SqlConnection connection;
@@ -21,7 +21,7 @@ namespace project_m7
         private DatabaseHelper dbHelper;
         
 
-        public Form3(string cardNumber)
+        public including_banking(string cardNumber)
         {
             InitializeComponent();
             this.cardNumber = cardNumber;
@@ -98,7 +98,7 @@ namespace project_m7
                         if (reader.Read())
                         {
                                 // عرض رقم البطاقة
-                                label6.Text = "Card Number: " + reader["cardnum"].ToString();
+                                label6.Text = reader["cardnum"].ToString();
 
                                 // تحديث الرصيد
                             currentBalance = Convert.ToDecimal(reader["balance"]);
@@ -159,10 +159,10 @@ namespace project_m7
             try
             {
                 Deposit depositForm = new Deposit(cardNumber);
-                if (depositForm.ShowDialog() == DialogResult.OK)
-                {
-                    LoadUserData(); // تحديث الرصيد من قاعدة البيانات
-                }
+                depositForm.ShowDialog();
+                // Update balance after deposit form is closed
+                currentBalance = dbHelper.GetBalance(cardNumber);
+                label9.Text = $"{currentBalance:C}";
             }
             catch (Exception ex)
             {
@@ -175,10 +175,10 @@ namespace project_m7
             try
             {
                 Withdral withdrawalForm = new Withdral(cardNumber);
-                if (withdrawalForm.ShowDialog() == DialogResult.OK)
-                {
-                    LoadUserData(); // تحديث الرصيد من قاعدة البيانات
-                }
+                withdrawalForm.ShowDialog();
+                // Update balance after withdrawal form is closed
+                currentBalance = dbHelper.GetBalance(cardNumber);
+                label9.Text = $"{currentBalance:C}";
             }
             catch (Exception ex)
             {
@@ -188,30 +188,29 @@ namespace project_m7
 
         private void Guna2Button3_Click(object sender, EventArgs e)
         {
-            string sourceCardNumber = cardNumber; // استخدام المتغير cardNumber مباشرة
-            TransferForm transferForm = new TransferForm(sourceCardNumber);
-            if (transferForm.ShowDialog() == DialogResult.OK)
+            try
             {
-                LoadUserData();
+                string sourceCardNumber = cardNumber;
+                TransferForm transferForm = new TransferForm(sourceCardNumber);
+                transferForm.ShowDialog();
+                // Update balance after transfer form is closed
+                currentBalance = dbHelper.GetBalance(cardNumber);
+                label9.Text = $"{currentBalance:C}";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error opening transfer form: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void linkLabel1_Click(object sender, EventArgs e)
         {
-            Form1 loginForm = new Form1();
+            login loginForm = new login();
             loginForm.Show();
             this.Hide();
         }
 
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {
-            base.OnFormClosing(e);
-            if (connection != null)
-            {
-                connection.Close();
-            }
-            Application.Exit();
-        }
+       
 
         private void guna2Button2_Click_1(object sender, EventArgs e)
         {
@@ -226,7 +225,7 @@ namespace project_m7
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             // Log out action
-            Form1 loginForm = new Form1();
+            login loginForm = new login();
             loginForm.Show();
             this.Hide();
         }
@@ -339,7 +338,7 @@ namespace project_m7
         private void label5_Click(object sender, EventArgs e)
         {
             // Navigate back to login form
-            Form1 loginForm = new Form1();
+            login loginForm = new login();
             loginForm.Show();
             this.Close();
         }
@@ -353,11 +352,33 @@ namespace project_m7
         private void guna2Button4_Click(object sender, EventArgs e)
         {
             // إظهار نموذج تسجيل الدخول أولاً
-            Form1 loginForm = new Form1();
-            loginForm.Show();
+            Home home = new Home(cardNumber);
+            home.Show();
             
             // إغلاق النموذج الحالي
-            this.Hide();
+            this.Close();
+        }
+
+        private void guna2Button6_Click(object sender, EventArgs e)
+        {
+            Sittings settingsForm = new Sittings(cardNumber);
+            settingsForm.ShowDialog();
+            this.Close();
+        }
+
+        private void guna2Button5_Click(object sender, EventArgs e)
+        {
+            // Make sure cardNumber is not null or empty before passing it to the history form
+            if (!string.IsNullOrEmpty(cardNumber))
+            {
+                history historyForm = new history(cardNumber);
+                historyForm.Show();
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Card number is not available. Cannot show transaction history.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

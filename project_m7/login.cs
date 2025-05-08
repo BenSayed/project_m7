@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -8,15 +8,16 @@ using System.Text;
 
 namespace project_m7
 {
-    public partial class Form1 : Form
+    public partial class login : Form
     {
         private readonly DatabaseHelper dbHelper;
 
-        public Form1()
+        public login()
         {
             InitializeComponent();
             dbHelper = new DatabaseHelper();
             SetupForm();
+            guna2Button1.Click -= guna2Button1_Click;
             guna2Button1.Click += guna2Button1_Click;
         }
 
@@ -55,15 +56,15 @@ namespace project_m7
 
         private void LinkLabel1_Click(object sender, EventArgs e)
         {
-            Form2 registerForm = new Form2();
+            sign_in registerForm = new sign_in();
             registerForm.Show();
-            this.Hide();
+            this.Close();
         }
 
         private void LinkLabel2_Click(object sender, EventArgs e)
         {
             PasswordResetForm resetForm = new PasswordResetForm();
-            resetForm.Show();
+            resetForm.ShowDialog();
         }
            
         private void guna2Button1_Click(object sender, EventArgs e)
@@ -97,23 +98,22 @@ namespace project_m7
                 var loginResult = dbHelper.LoginUser(cardnum, password);
                 if (loginResult.Success)
                 {
-                    MessageBox.Show("Login successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Form3 form3 = new Form3(cardnum);
-                    form3.Show();
-                    this.Hide();
+                    Home homeForm = new Home(cardnum);
+                    homeForm.Show();
+                    this.Close();
                 }
                 else
                 {
                     MessageBox.Show(loginResult.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    if (loginResult.Message.Contains("password"))
-                    {
-                        guna2TextBox2.Text = "";
-                        guna2TextBox2.Focus();
-                    }
-                    else
-                    {
-                        guna2TextBox1.Focus();
-                    }
+                    //if (loginResult.Message.Contains("password"))
+                    //{
+                    //    guna2TextBox2.Text = "";
+                    //    guna2TextBox2.Focus();
+                    //}
+                    //else
+                    //{
+                    //    guna2TextBox1.Focus();
+                    //}
                 }
             }
             catch (Exception ex)
@@ -153,15 +153,29 @@ namespace project_m7
             control.Region = new Region(path);
         }
 
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {
-            base.OnFormClosing(e);
-            Application.Exit();
-        }
+     
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
 
         }
+
+        private void guna2Button2_Click(object sender, EventArgs e)
+        {
+            start start = new start();
+            start.Show();
+            this.Close();
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+        
     }
 }

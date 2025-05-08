@@ -97,7 +97,7 @@ namespace project_m7
             this.withdrawButton.Font = new System.Drawing.Font("Arial Rounded MT Bold", 11F);
             this.withdrawButton.ForeColor = System.Drawing.Color.White;
             this.withdrawButton.Location = new System.Drawing.Point(293, 325);
-            this.withdrawButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.withdrawButton.Margin = new System.Windows.Forms.Padding(4);
             this.withdrawButton.Name = "withdrawButton";
             this.withdrawButton.Size = new System.Drawing.Size(267, 62);
             this.withdrawButton.TabIndex = 3;
@@ -121,7 +121,7 @@ namespace project_m7
             // 
             this.cardNumberLabel.AutoSize = true;
             this.cardNumberLabel.Font = new System.Drawing.Font("Arial", 10F);
-            this.cardNumberLabel.Location = new System.Drawing.Point(53, 112);
+            this.cardNumberLabel.Location = new System.Drawing.Point(50, 112);
             this.cardNumberLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.cardNumberLabel.Name = "cardNumberLabel";
             this.cardNumberLabel.Size = new System.Drawing.Size(184, 32);
@@ -155,7 +155,7 @@ namespace project_m7
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.ClientSize = new System.Drawing.Size(813, 502);
+            this.ClientSize = new System.Drawing.Size(669, 413);
             this.Controls.Add(this.titleLabel);
             this.Controls.Add(this.cardNumberLabel);
             this.Controls.Add(this.passwordLabel);
@@ -164,10 +164,11 @@ namespace project_m7
             this.Controls.Add(this.passwordTextBox);
             this.Controls.Add(this.amountTextBox);
             this.Controls.Add(this.withdrawButton);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Withdral";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Withdrawal";
+            this.Load += new System.EventHandler(this.Withdral_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
